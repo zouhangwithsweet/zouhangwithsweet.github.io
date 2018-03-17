@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="vue,express,cors跨域," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="我们在项目开发中，使用第三方接口难免会遇到一些跨域问题，而跨域这个话题网上已经讨论了无数遍了。常用的有：   jsonp cors 服务端反向代理（因为服务端不存在跨域问题）     　　现在推荐的方式是CORS跨资源共享。在我看来，CORS本质是一种白名单，其关字段为 Access-Control-Allow-Origin，通过标记请求发起站点是否可以访问目标站点的资源，达到跨域的目的。CO">
+<meta name="keywords" content="vue,express,cors跨域">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于第三方API跨域那些事">
+<meta property="og:url" content="https://github.com/zouhangwithsweet/2018/03/12/corsapi.html">
+<meta property="og:site_name" content="zou hangoo">
+<meta property="og:description" content="我们在项目开发中，使用第三方接口难免会遇到一些跨域问题，而跨域这个话题网上已经讨论了无数遍了。常用的有：   jsonp cors 服务端反向代理（因为服务端不存在跨域问题）     　　现在推荐的方式是CORS跨资源共享。在我看来，CORS本质是一种白名单，其关字段为 Access-Control-Allow-Origin，通过标记请求发起站点是否可以访问目标站点的资源，达到跨域的目的。CO">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-03-17T00:57:36.913Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="关于第三方API跨域那些事">
+<meta name="twitter:description" content="我们在项目开发中，使用第三方接口难免会遇到一些跨域问题，而跨域这个话题网上已经讨论了无数遍了。常用的有：   jsonp cors 服务端反向代理（因为服务端不存在跨域问题）     　　现在推荐的方式是CORS跨资源共享。在我看来，CORS本质是一种白名单，其关字段为 Access-Control-Allow-Origin，通过标记请求发起站点是否可以访问目标站点的资源，达到跨域的目的。CO">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://github.com/zouhangwithsweet/2018/03/12/corsapi.html"/>
+
+
+
+
+
+  <title>关于第三方API跨域那些事 | zou hangoo</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zou hangoo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">特别能憋尿</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://github.com/zouhangwithsweet/2018/03/12/corsapi.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zou hang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.JPG">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zou hangoo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">关于第三方API跨域那些事</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-12T11:49:26+08:00">
+                2018-03-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/03/12/corsapi.html" class="leancloud_visitors" data-flag-title="关于第三方API跨域那些事">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>　　我们在项目开发中，使用第三方接口难免会遇到一些跨域问题，而跨域这个话题网上已经讨论了无数遍了。常用的有：</p>
+<blockquote>
+<ul>
+<li>jsonp</li>
+<li>cors</li>
+<li>服务端反向代理（因为服务端不存在跨域问题）  </li>
+</ul>
+</blockquote>
+<p>　　现在推荐的方式是<a href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Access_control_CORS" target="_blank" rel="noopener">CORS跨资源共享</a>。在我看来，CORS本质是一种白名单，其关字段为 <strong>Access-Control-Allow-Origin</strong>，通过标记请求发起站点是否可以访问目标站点的资源，达到跨域的目的。CORS支持所有的http方法，可以说是跨域的本质解决方案。jsonp本质是一个hack，现在不推荐使用了。</p>
+<p>　　那么我们在使用第三方API的时候，API的提供者是怎样处理跨域问题呢？以<a href="https://cnodejs.org/api" target="_blank" rel="noopener">cnode.js开放平台</a>为例，我们访问<a href="https://cnodejs.org/api/v1/topics" target="_blank" rel="noopener">一个API</a>接口时，我们发现这些接口的响应头部分包含了<strong>Access-Control-Allow-Origin:*</strong>，它就是允许所有站点可以跨域访问它的标志。但是有的接口，可能没有这个响应字段。我们在自己造玩具、开发调试的时候怎么处理呢？</p>
+<p>以<code>vue-cli:2.8.2</code>为例，我们可以在<code>config/index.js</code>中修改如下代代码：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">proxyTable: &#123;</span><br><span class="line">    <span class="string">'/api'</span>: &#123;    <span class="comment">//将www.exaple.com印射为/apis</span></span><br><span class="line">        target: <span class="string">'http://127.0.0.1:5000'</span>,  <span class="comment">// 接口域名</span></span><br><span class="line">        changeOrigin: <span class="literal">true</span>,  <span class="comment">//是否跨域</span></span><br><span class="line">        secure: <span class="literal">false</span> </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这段代码会为 <a href="https://doc.webpack-china.org/configuration/dev-server/#devserver-proxy" target="_blank" rel="noopener">webpack-dev-server</a> 提供一个代理配置，它内部使用<a href="https://github.com/chimurai/http-proxy-middleware">http-proxy-middleware</a>，一个非常强大的node代理工具，这个是可以通过反向代理，实现开发中跨域访问接口的。</p>
+<p>　　那么我们自己来模拟代理要如何来做呢？在学习的过程，我们可以用<code>express</code>作为服务器实现接口转发，这种技术或者叫中间层越来越流行。一般是一传统的<code>Java，PHP，Python, Golang</code>等后台语言作为服务器开发接口，前端通过node中间层来转发接口，返回前端想要的数据格式，极大的提高了接口开发的效率和需求的多样性。现在我们来实现一个简单的<code>express</code>转发接口，实现跨域和返回自己想要的数据。</p>
+<p>　　我们以 <a href="https://www.v2ex.com/api" target="_blank" rel="noopener">https://www.v2ex.com/api</a> 接口为例，这个接口的响应头没有<strong>Access-Control-Allow-Origin</strong>字段，所以正常使用axios调用此类接口，虽然可以访问到数据，但是axios本身的跨域错误机制，导致我们无法使用其返回的数据。<code>express</code>登场了，我们将使用它来实现接口转发实现跨域。首先我们准备一个路由文件<code>config/proxy.js</code>：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">    <span class="string">'/api/now'</span>: <span class="string">'https://www.v2ex.com/api/topics/latest.json'</span>,</span><br><span class="line">    <span class="string">'/api/hot'</span>: <span class="string">'https://www.v2ex.com/api/topics/hot.json'</span>,</span><br><span class="line">    <span class="string">'/api/node'</span>: <span class="string">'https://www.v2ex.com/api/nodes/show.json'</span>,</span><br><span class="line">    <span class="string">'/api/userinfo'</span>: <span class="string">'https://www.v2ex.com/api/members/show.json'</span>,</span><br><span class="line">    <span class="string">'/api/replies'</span>: <span class="string">'https://www.v2ex.com/api/replies/show.json'</span>,</span><br><span class="line">    <span class="string">'/api/topics'</span>: <span class="string">'https://www.v2ex.com/api/topics/show.json'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里我重新定义了接口的名称，你可以把他任意定为你想要的名字。接下来准备一个<code>server.js</code>，也就是我们服务端的主文件：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">'express'</span>)</span><br><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>)</span><br><span class="line"><span class="keyword">const</span> axios = <span class="built_in">require</span>(<span class="string">'axios'</span>)</span><br><span class="line"><span class="keyword">const</span> app = express()</span><br><span class="line"><span class="comment">// 引入第三方路由</span></span><br><span class="line"><span class="keyword">const</span> proxyConf = <span class="built_in">require</span>(<span class="string">'./config/proxy'</span>)</span><br><span class="line"><span class="keyword">const</span> headerConf = &#123;</span><br><span class="line">    referer: <span class="string">'https://www.v2ex.com'</span>,</span><br><span class="line">    host: <span class="string">'www.v2ex.com'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> apiRoutes = express.Router()</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> k <span class="keyword">in</span> proxyConf) &#123;</span><br><span class="line">    app.get(k, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</span><br><span class="line">        axios.get(proxyConf[k], &#123;</span><br><span class="line">            headers: headerConf,</span><br><span class="line">            params: req.query</span><br><span class="line">        &#125;).then(<span class="function"><span class="params">response</span> =&gt;</span> &#123;</span><br><span class="line">            res.setHeader(<span class="string">'Access-Control-Allow-Origin'</span>, <span class="string">'*'</span>)</span><br><span class="line">            res.json(response.data)</span><br><span class="line">        &#125;).catch(<span class="function"><span class="params">e</span> =&gt;</span> &#123;</span><br><span class="line">            <span class="built_in">console</span>.log(e)</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">app.use(<span class="string">'/'</span>, apiRoutes)</span><br><span class="line">app.use(express.static(path.join(__dirname, <span class="string">'dist'</span>)))</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> port = process.env.PORT || <span class="number">5000</span></span><br><span class="line">app.listen(port)</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'server started '</span> + port)</span><br></pre></td></tr></table></figure></p>
+<p>执行<code>node server.js</code></p>
+<p>　　这里关键代码为<code>res.setHeader(&#39;Access-Control-Allow-Origin&#39;, &#39;*&#39;)</code>，我们主动给这个简单的http服务器的响应头设置了允许跨域访问，所以你可以通过axios调用<code>http://127.0.0.1:5000/api/now</code>等接口而不会出现跨域报错的问题。在 <code>res.json(response.data)</code>这个操作之前，我们可以根据请求消息<code>req</code>处理返回消息<code>response.data</code>，比如分页，达到我们想要返回的数据的目的。这样我们就模拟了一个反向代理服务器。^-^</p>
+<p>最后，欢迎在<a href="https://github.com/zouhangwithsweet/v2ex-vue">GitHub</a>留言，一起学习js，一起进步。 </p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/vue/" rel="tag"># vue</a>
+          
+            <a href="/tags/express/" rel="tag"># express</a>
+          
+            <a href="/tags/cors跨域/" rel="tag"># cors跨域</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/10/firstBlog.html" rel="next" title="我的第一篇博客">
+                <i class="fa fa-chevron-left"></i> 我的第一篇博客
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/03/17/http1.html" rel="prev" title="别人问你http协议，到底是想问什么？">
+                别人问你http协议，到底是想问什么？ <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview sidebar-panel sidebar-panel-active">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.JPG"
+               alt="zou hang" />
+          <p class="site-author-name" itemprop="name">zou hang</p>
+           
+              <p class="site-description motion-element" itemprop="description">艰难人生，全力前进</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zouhangwithsweet" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/zou-hang-30/activities" target="_blank" title="Zhihu">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                    
+                      Zhihu
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zou hang</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("ra5bykhTzmKUHptvu3exwsfC-gzGzoHsz", "HDhiTRnTGnPe4JHlS4W0RfD5");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
