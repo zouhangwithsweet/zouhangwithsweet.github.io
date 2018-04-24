@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="js/ES6,prototype/class," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="最开始学习面向对象编写代码的时候，自己是个菜鸡，2018年了，还是个菜鸡，废话不多说。当年面向对象写法的第一个示例就是实现一个拖拽的类的编写，使用的是构造函数的prototype属性，为实例对象提供方法。最近的工作也是和拖拽类打交道，这段代码也逐渐的进化并应用到多个使用场景，也从prototype的写法进化为ES6 class。  实现拖拽的原理十分简单相信大家也都是烂熟于心，核心就是元素的初始">
+<meta name="keywords" content="js&#x2F;ES6,prototype&#x2F;class">
+<meta property="og:type" content="article">
+<meta property="og:title" content="拖拽类，一段代码的进化史">
+<meta property="og:url" content="https://github.com/zouhangwithsweet/2018/04/24/dragable.html">
+<meta property="og:site_name" content="zou hangoo">
+<meta property="og:description" content="最开始学习面向对象编写代码的时候，自己是个菜鸡，2018年了，还是个菜鸡，废话不多说。当年面向对象写法的第一个示例就是实现一个拖拽的类的编写，使用的是构造函数的prototype属性，为实例对象提供方法。最近的工作也是和拖拽类打交道，这段代码也逐渐的进化并应用到多个使用场景，也从prototype的写法进化为ES6 class。  实现拖拽的原理十分简单相信大家也都是烂熟于心，核心就是元素的初始">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://mdn.mozillademos.org/files/15087/rect.png">
+<meta property="og:updated_time" content="2018-04-24T11:31:41.333Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="拖拽类，一段代码的进化史">
+<meta name="twitter:description" content="最开始学习面向对象编写代码的时候，自己是个菜鸡，2018年了，还是个菜鸡，废话不多说。当年面向对象写法的第一个示例就是实现一个拖拽的类的编写，使用的是构造函数的prototype属性，为实例对象提供方法。最近的工作也是和拖拽类打交道，这段代码也逐渐的进化并应用到多个使用场景，也从prototype的写法进化为ES6 class。  实现拖拽的原理十分简单相信大家也都是烂熟于心，核心就是元素的初始">
+<meta name="twitter:image" content="https://mdn.mozillademos.org/files/15087/rect.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://github.com/zouhangwithsweet/2018/04/24/dragable.html"/>
+
+
+
+
+
+  <title>拖拽类，一段代码的进化史 | zou hangoo</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zou hangoo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">特别能憋尿</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://github.com/zouhangwithsweet/2018/04/24/dragable.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zou hang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.JPG">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zou hangoo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">拖拽类，一段代码的进化史</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-24T16:50:54+08:00">
+                2018-04-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/04/24/dragable.html" class="leancloud_visitors" data-flag-title="拖拽类，一段代码的进化史">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>最开始学习面向对象编写代码的时候，自己是个菜鸡，2018年了，还是个菜鸡，废话不多说。当年面向对象写法的第一个示例就是实现一个拖拽的类的编写，使用的是构造函数的prototype属性，为实例对象提供方法。最近的工作也是和拖拽类打交道，这段代码也逐渐的进化并应用到多个使用场景，也从prototype的写法进化为ES6 class。</p>
+</blockquote>
+<p>实现拖拽的原理十分简单相信大家也都是烂熟于心，<strong>核心就是元素的初始坐标，和鼠标移动终止位置的坐标差值，其中要去除点击位置到元素的左、上边界。</strong></p>
+<p>es5 prototype的写法大概是这样的<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Drag</span>(<span class="params">id</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> _this=<span class="keyword">this</span>;</span><br><span class="line">    <span class="keyword">this</span>.disx=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">this</span>.disy=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">this</span>.oDiv=<span class="built_in">document</span>.getElementById(id);</span><br><span class="line">    <span class="keyword">this</span>.oDiv.onmousedown=<span class="function"><span class="keyword">function</span>(<span class="params">ev</span>)</span>&#123;</span><br><span class="line">        _this.fnDown(ev);</span><br><span class="line">        <span class="comment">// 阻止冒泡</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 点击</span></span><br><span class="line">Drag.prototype.fnDown=<span class="function"><span class="keyword">function</span> (<span class="params">ev</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> _this=<span class="keyword">this</span>;</span><br><span class="line">    <span class="comment">// 兼容IE</span></span><br><span class="line">    <span class="keyword">var</span> oev=ev||event;</span><br><span class="line">    <span class="comment">// 记录点击位置到元素上边和左边的距离</span></span><br><span class="line">    <span class="keyword">this</span>.disx=oev.clientX-<span class="keyword">this</span>.oDiv.offsetLeft;</span><br><span class="line">    <span class="keyword">this</span>.disy=oev.clientY-<span class="keyword">this</span>.oDiv.offsetTop;</span><br><span class="line">    <span class="built_in">document</span>.onmousemove=<span class="function"><span class="keyword">function</span>(<span class="params">ev</span>)</span>&#123;</span><br><span class="line">        _this.fnMove(ev);</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="built_in">document</span>.onmouseup=<span class="function"><span class="keyword">function</span>(<span class="params">ev</span>)</span>&#123;</span><br><span class="line">        _this.fnUp(ev);</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 移动</span></span><br><span class="line">Drag.prototype.fnMove=<span class="function"><span class="keyword">function</span> (<span class="params">ev</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> oev=ev||event;</span><br><span class="line">    <span class="comment">// 计算坐标的差值</span></span><br><span class="line">    <span class="keyword">this</span>.oDiv.style.left=oev.clientX-<span class="keyword">this</span>.disx+<span class="string">"px"</span>;</span><br><span class="line">    <span class="keyword">this</span>.oDiv.style.top=oev.clientY-<span class="keyword">this</span>.disy+<span class="string">"px"</span>;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 销毁绑定事件</span></span><br><span class="line">Drag.prototype.fnUp=<span class="function"><span class="keyword">function</span> (<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="built_in">document</span>.onmousemove=<span class="literal">null</span>;</span><br><span class="line">    <span class="built_in">document</span>.onmouseup=<span class="literal">null</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>有几个注意点</p>
+<ul>
+<li>鼠标<code>mousemove，moveuseup</code>事件是在点击事件之后绑定的，鼠标抬起后要销毁事件，不然这两个时间一直存在，导致元素跟着鼠标走。</li>
+<li><code>mousemove，moveuseup</code>事件的绑定最好绑定在<code>window</code>或<code>document</code>上，因为直接绑定在拖拽元素上会出现，鼠标太快超出元素大小，停止移动的现象。</li>
+<li>这里的事件绑定使用的是dom1级事件，直接给属性赋值，老代码了不推荐。</li>
+</ul>
+<p>现在肯定是要用ES6 class来实现，代码更清晰：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Drag</span> </span>&#123;</span><br><span class="line">    <span class="keyword">constructor</span>(el) &#123;</span><br><span class="line">        <span class="keyword">this</span>.el = el</span><br><span class="line">        <span class="comment">// 拖拽信息</span></span><br><span class="line">        <span class="keyword">this</span>.mouse = &#123;&#125;</span><br><span class="line">        <span class="keyword">this</span>.mouse.init = <span class="literal">false</span></span><br><span class="line">        <span class="keyword">this</span>.init()</span><br><span class="line">        <span class="keyword">this</span>.initDrag()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//绝对定位初始化</span></span><br><span class="line">    init() &#123;</span><br><span class="line">        <span class="keyword">this</span>.el.style.position = <span class="string">'absolute'</span></span><br><span class="line">        <span class="keyword">this</span>.el.style.top = <span class="string">`<span class="subst">$&#123;<span class="keyword">this</span>.el.offsetTop&#125;</span>px`</span></span><br><span class="line">        <span class="keyword">this</span>.el.style.left = <span class="string">`<span class="subst">$&#123;<span class="keyword">this</span>.el.offsetLeft&#125;</span>px`</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 拖动初始化</span></span><br><span class="line">    initDrag() &#123;</span><br><span class="line">        <span class="keyword">this</span>.el.addEventListener(<span class="string">'mousedown'</span>, e =&gt; &#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="regexp">/input|textarea/</span>.test(e.target.tagName.toLowerCase())) <span class="keyword">return</span></span><br><span class="line">            <span class="keyword">this</span>.mouse.init = <span class="literal">true</span></span><br><span class="line">            <span class="keyword">this</span>.mouse.offsetX = e.pageX - <span class="keyword">this</span>.el.offsetLeft</span><br><span class="line">            <span class="keyword">this</span>.mouse.offsetY = e.pageY - <span class="keyword">this</span>.el.offsetTop</span><br><span class="line">            <span class="comment">// 建立一个函数引用，进行销毁</span></span><br><span class="line">            <span class="keyword">this</span>.moveHandler = <span class="keyword">this</span>.move.bind(<span class="keyword">this</span>)</span><br><span class="line">            <span class="keyword">this</span>.upHanler = <span class="keyword">this</span>.up.bind(<span class="keyword">this</span>)</span><br><span class="line">            <span class="built_in">window</span>.addEventListener(<span class="string">'mousemove'</span>, <span class="keyword">this</span>.moveHandler)</span><br><span class="line">            <span class="built_in">window</span>.addEventListener(<span class="string">'mouseup'</span>, <span class="keyword">this</span>.upHanler)</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 拖动</span></span><br><span class="line">    move(e) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!<span class="keyword">this</span>.mouse.init) &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">this</span>.el.style.left = e.pageX - <span class="keyword">this</span>.mouse.offsetX  + <span class="string">'px'</span></span><br><span class="line">        <span class="keyword">this</span>.el.style.top = e.pageY - <span class="keyword">this</span>.mouse.offsetY + <span class="string">'px'</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 松开</span></span><br><span class="line">    up() &#123;</span><br><span class="line">        <span class="keyword">this</span>.mouse.init = <span class="literal">false</span></span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'ok'</span>)</span><br><span class="line">        <span class="built_in">window</span>.removeEventListener(<span class="string">'mousemove'</span>, <span class="keyword">this</span>.moveHandler)</span><br><span class="line">        <span class="built_in">window</span>.removeEventListener(<span class="string">'mouseup'</span>, <span class="keyword">this</span>.upHanler)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>和老代码相比有几个升级优化的部分</p>
+<ul>
+<li>主要给元素添加<code>position:absolute</code>，初始化他的位置，更合理。</li>
+<li>使用了<code>e.pageX,e.pageY</code>,获取元素相对视口的位置可用<code>getBoundingClientRect</code><br><img src="https://mdn.mozillademos.org/files/15087/rect.png" alt="image1"></li>
+<li>当元素为<code>input</code>或者<code>textarea</code>时不能拖动。</li>
+<li>使用dom2级事件进行事件监听和接触监听</li>
+</ul>
+<p><strong>注意</strong><br>在class内默认严格模式，一定要主要上下文的<code>this</code>指向，直接给<code>window</code>绑定一个方法，例如<code>window.addEventListener(&#39;mousemove&#39;, this.move)</code>此时的监听函数的<code>this</code>是指向<code>window</code>的，这显然无法实现拖动，所以要<code>this.move.bind(this)</code>绑定到实例本身。<br>我为什么要建立一个函数引用呢？<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 建立一个函数引用，进行销毁</span></span><br><span class="line"><span class="keyword">this</span>.moveHandler = <span class="keyword">this</span>.move.bind(<span class="keyword">this</span>)</span><br><span class="line"><span class="keyword">this</span>.upHanler = <span class="keyword">this</span>.up.bind(<span class="keyword">this</span>)</span><br></pre></td></tr></table></figure></p>
+<p><strong>原因是因为每调用一次<code>Function.bind</code>就会创建一个新的函数</strong>，直接调用<br><code>window.removeEventListener(&#39;mousemove&#39;, this.move.bind(this))</code><br>是无法销毁你监听事件的，因为这已经是两个函数了，只是内容一样而已。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">a</span> (<span class="params"></span>) </span>&#123;<span class="built_in">console</span>.log(<span class="number">1</span>)&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> b = a.bind(<span class="literal">null</span>)</span><br><span class="line"><span class="keyword">let</span> c = a.bind(<span class="literal">null</span>)</span><br><span class="line">b == a <span class="comment">//false</span></span><br><span class="line">c == b <span class="comment">//false</span></span><br></pre></td></tr></table></figure></p>
+<p><strong>ES5中，坚持一个原则：this永远指向最后调用它的那个对象！！！</strong><br><strong>ES6中，箭头函数没有this，它会向父级查找离它最近的一个非箭头函数的this，找不到就是undefined</strong><br><strong>普通函数的this会指向window，严格模式下指向undefined</strong>  </p>
+<p>有几种改变<code>this的方法</code></p>
+<ul>
+<li>new 方法</li>
+<li>箭头函数</li>
+<li>apply,call,bind  </li>
+</ul>
+<p>关于<code>this</code>不在一一赘述了，网上大神比我讲的好。下面说下，拖拽类的使用场景：</p>
+<ul>
+<li><p>实现一个<code>vue</code>拖拽指令<code>v-drag</code>，简单易用适合不复杂场景</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">    name: <span class="string">'drag'</span>,</span><br><span class="line">    bind: <span class="function"><span class="keyword">function</span>(<span class="params">el</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> offsetX = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">var</span> offsetY = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">function</span> <span class="title">move</span>(<span class="params">e</span>) </span>&#123;</span><br><span class="line">            el.style.left = e.pageX - offsetX + <span class="string">'px'</span>;</span><br><span class="line">            el.style.top = e.pageY - offsetY + <span class="string">'px'</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">function</span> <span class="title">up</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">            <span class="built_in">window</span>.removeEventListener(<span class="string">'mousemove'</span>, move);</span><br><span class="line">            <span class="built_in">window</span>.removeEventListener(<span class="string">'mouseup'</span>, up);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">function</span> <span class="title">down</span>(<span class="params">e</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="regexp">/input|textarea/</span>.test(e.target.tagName.toLowerCase())) <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">            offsetX = e.pageX - el.offsetLeft;</span><br><span class="line">            offsetY = e.pageY - el.offsetTop;</span><br><span class="line">            <span class="built_in">window</span>.addEventListener(<span class="string">'mousemove'</span>, move);</span><br><span class="line">            <span class="built_in">window</span>.addEventListener(<span class="string">'mouseup'</span>, up);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        el.addEventListener(<span class="string">'mousedown'</span>, down)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>结合<code>iscroll5</code>实现拖拽滚动，<code>better-scroll</code>应该也可以</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">handleMouseMove(e) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">this</span>.mouse.init) &#123;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">const</span> deltaX = <span class="keyword">this</span>.mouse.startX - e.pageX</span><br><span class="line">    <span class="keyword">const</span> deltaY = <span class="keyword">this</span>.mouse.startY - e.pageY</span><br><span class="line">    <span class="keyword">this</span>.mouse.cord = [deltaX &gt; <span class="number">0</span>, deltaY &gt; <span class="number">0</span>]</span><br><span class="line">    <span class="keyword">this</span>.myScroll.scrollTo(<span class="keyword">this</span>.mouse.scrollerX - deltaX, <span class="keyword">this</span>.mouse.scrollerY - deltaY)</span><br><span class="line">&#125;,</span><br><span class="line">handleMouseDown(e) &#123;</span><br><span class="line">    <span class="comment">// 特殊区域处理</span></span><br><span class="line">    <span class="keyword">const</span> content = <span class="keyword">this</span>.$refs.scroller.$el</span><br><span class="line">    <span class="keyword">if</span> (!e.target.parentNode.contains(content)) <span class="keyword">return</span></span><br><span class="line">    <span class="keyword">if</span> (e.target.contains(content)) <span class="keyword">return</span></span><br><span class="line">    <span class="keyword">if</span> (e.target &amp;&amp; e.target.nodeName === <span class="string">'CANVAS'</span>) <span class="keyword">return</span></span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">this</span>.myScroll) <span class="keyword">return</span></span><br><span class="line">    <span class="keyword">this</span>.mouse.init = <span class="literal">true</span></span><br><span class="line">    <span class="keyword">this</span>.direction = <span class="literal">true</span></span><br><span class="line">    <span class="keyword">this</span>.mouse.startX = e.pageX</span><br><span class="line">    <span class="keyword">this</span>.mouse.startY = e.pageY</span><br><span class="line">    <span class="keyword">this</span>.mouse.scrollerX = <span class="keyword">this</span>.myScroll.x</span><br><span class="line">    <span class="keyword">this</span>.mouse.scrollerY = <span class="keyword">this</span>.myScroll.y</span><br><span class="line">&#125;,</span><br><span class="line">handleMouseUp(e) &#123;</span><br><span class="line">    <span class="keyword">const</span> content = <span class="keyword">this</span>.$refs.scroller.$el</span><br><span class="line">    <span class="keyword">if</span> (!e.target.parentNode.contains(content)) <span class="keyword">return</span></span><br><span class="line">    <span class="keyword">if</span> (e.target.contains(content)) <span class="keyword">return</span></span><br><span class="line">    <span class="keyword">this</span>.mouse.init = <span class="literal">false</span></span><br><span class="line">    <span class="keyword">this</span>.direction = <span class="literal">false</span></span><br><span class="line">    <span class="keyword">let</span> deltaX = <span class="keyword">this</span>.myScroll.x - START_X</span><br><span class="line">    <span class="keyword">let</span> deltaY = <span class="keyword">this</span>.myScroll.y - START_Y</span><br><span class="line">    <span class="keyword">this</span>.saveScrollerConfig(&#123;</span><br><span class="line">        x: deltaX,</span><br><span class="line">        y: deltaY</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>拖拽进度条等等。</p>
+</li>
+</ul>
+<p>从ES5到ES6，从prototype到class，一段代码的进化史。</p>
+<p><strong>HTML5拖放drag，drop待续</strong><br>欢迎在<a href="https://github.com/zouhangwithsweet">GitHub</a>给我留言，一起学习，一起进步。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/js-ES6/" rel="tag"># js/ES6</a>
+          
+            <a href="/tags/prototype-class/" rel="tag"># prototype/class</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/24/http3.html" rel="next" title="别人问你http协议，到底是想问什么？（三）<br/>http 方法与ajax封装">
+                <i class="fa fa-chevron-left"></i> 别人问你http协议，到底是想问什么？（三）<br/>http 方法与ajax封装
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview sidebar-panel sidebar-panel-active">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.JPG"
+               alt="zou hang" />
+          <p class="site-author-name" itemprop="name">zou hang</p>
+           
+              <p class="site-description motion-element" itemprop="description">艰难人生，全力前进</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zouhangwithsweet" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/zou-hang-30/activities" target="_blank" title="Zhihu">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                    
+                      Zhihu
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zou hang</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("ra5bykhTzmKUHptvu3exwsfC-gzGzoHsz", "HDhiTRnTGnPe4JHlS4W0RfD5");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
