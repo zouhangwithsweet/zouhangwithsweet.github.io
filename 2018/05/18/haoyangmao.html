@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="express,node,云引擎,薅羊毛," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="记得去年的腾讯云和阿里云推出了一系列优惠活动，白菜价云服务器。当时在v2看到不少大佬上车了，v2站长当时指出“便宜没好货”，果然现在都成“阿里扎”了。当时本人也是蠢蠢欲动，想走一波团购上车，无奈还是要花钱啊。而且我对域名没啥特别的追求，我只希望有个能在线访问的主机即可。   好吧，以上一段话翻译过来就是——花钱是不可能的！ 在下实在是穷的飞起。一直徘徊在薅羊毛的路上，免费的云引擎和数据库是在下的">
+<meta name="keywords" content="express,node,云引擎,薅羊毛">
+<meta property="og:type" content="article">
+<meta property="og:title" content="前端薅羊毛之部署玩具 react&#x2F;vue 单页应用">
+<meta property="og:url" content="https://github.com/zouhangwithsweet/2018/05/18/haoyangmao.html">
+<meta property="og:site_name" content="zou hangoo">
+<meta property="og:description" content="记得去年的腾讯云和阿里云推出了一系列优惠活动，白菜价云服务器。当时在v2看到不少大佬上车了，v2站长当时指出“便宜没好货”，果然现在都成“阿里扎”了。当时本人也是蠢蠢欲动，想走一波团购上车，无奈还是要花钱啊。而且我对域名没啥特别的追求，我只希望有个能在线访问的主机即可。   好吧，以上一段话翻译过来就是——花钱是不可能的！ 在下实在是穷的飞起。一直徘徊在薅羊毛的路上，免费的云引擎和数据库是在下的">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://github.com/images/h0.jpg">
+<meta property="og:image" content="https://github.com/images/h1.png">
+<meta property="og:image" content="https://github.com/images/h2.png">
+<meta property="og:image" content="https://github.com/images/h3.png">
+<meta property="og:image" content="https://github.com/images/h4.png">
+<meta property="og:image" content="https://github.com/images/h5.png">
+<meta property="og:image" content="https://github.com/images/h6.png">
+<meta property="og:image" content="https://github.com/images/h7.png">
+<meta property="og:image" content="https://github.com/images/h8.png">
+<meta property="og:image" content="https://github.com/images/h9.png">
+<meta property="og:image" content="https://github.com/images/h10.png">
+<meta property="og:updated_time" content="2018-05-18T08:52:59.163Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="前端薅羊毛之部署玩具 react&#x2F;vue 单页应用">
+<meta name="twitter:description" content="记得去年的腾讯云和阿里云推出了一系列优惠活动，白菜价云服务器。当时在v2看到不少大佬上车了，v2站长当时指出“便宜没好货”，果然现在都成“阿里扎”了。当时本人也是蠢蠢欲动，想走一波团购上车，无奈还是要花钱啊。而且我对域名没啥特别的追求，我只希望有个能在线访问的主机即可。   好吧，以上一段话翻译过来就是——花钱是不可能的！ 在下实在是穷的飞起。一直徘徊在薅羊毛的路上，免费的云引擎和数据库是在下的">
+<meta name="twitter:image" content="https://github.com/images/h0.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://github.com/zouhangwithsweet/2018/05/18/haoyangmao.html"/>
+
+
+
+
+
+  <title>前端薅羊毛之部署玩具 react/vue 单页应用 | zou hangoo</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zou hangoo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">特别能憋尿</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://github.com/zouhangwithsweet/2018/05/18/haoyangmao.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zou hang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.JPG">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zou hangoo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">前端薅羊毛之部署玩具 react/vue 单页应用</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-18T15:24:00+08:00">
+                2018-05-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/05/18/haoyangmao.html" class="leancloud_visitors" data-flag-title="前端薅羊毛之部署玩具 react/vue 单页应用">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>记得去年的腾讯云和阿里云推出了一系列优惠活动，白菜价云服务器。当时在v2看到不少大佬上车了，v2站长当时指出“便宜没好货”，果然现在都成“阿里扎”了。当时本人也是蠢蠢欲动，想走一波团购上车，无奈还是要花钱啊。而且我对域名没啥特别的追求，我只希望有个能在线访问的主机即可。</p>
+</blockquote>
+<blockquote>
+<p>好吧，以上一段话翻译过来就是——<strong>花钱是不可能的！</strong> 在下实在是穷的飞起。一直徘徊在薅羊毛的路上，免费的云引擎和数据库是在下的最爱。</p>
+</blockquote>
+<p>我知道第一个免费的云引擎是大名鼎鼎的<strong>heroku.com</strong>，它提供免费500m的空间，这个东西在国外火了很久，<code>GitHub</code>有个不得了的项目就是部署在<strong>heroku.com</strong>上的，后来该项目被删了。去年的时候<strong>heroku.com</strong>的访问速度还是可以的，至少能进去控制台，能部署、重启项目，过完年之后速度没法看了。</p>
+<p>实在是没办法只能把眼光放到国内，薅国产羊毛。众所周知，我们可以在<code>GitHub</code>部署纯静态的页面，博客等等；没错我也部署了这个<code>hexo</code>，正如你看到这个，在设置<code>hexo next</code>主题的时候发现了能够存储<code>访问次数</code>的免费容器，也就是我们今天的羊毛猪脚——<strong>leancloud.cn</strong>（真的不是广告）。这个太（不）吊（要）了（钱），正是我这种前端精（穷）英（bi）需要的。</p>
+<p><code>leancloud</code>的开发版每天提供500m访问流量，不要钱，不少了；10G存储空间；30000次API请求；要啥自行车！<strong>因为在下是个前端，只知道点<code>node.js</code>，所有的玩具都是用<code>node</code>跑<code>express</code>的。</strong></p>
+<p><strong>鼓掌，开始薅</strong>~</p>
+<p><img src="/images/h0.jpg" width="300" align="center"></p>
+<p>第一步，访问<strong>leancloud.cn</strong><br><img src="/images/h1.png" alt=""><br>点击右上角的直接访问控制台。<strong>纳尼</strong>！不用注册、登录之类的吗？别急，那是下一步。</p>
+<p>然后，注册，登录，基操。<br><img src="/images/h2.png" alt=""><br>我们选gayhub作为登录账号，美滋滋。登录后就进去控制台了。<br><img src="/images/h3.png" alt=""><br>看到这个快速入门没？<strong>好的，我们不看</strong>。直接创建新应用。<br><img src="/images/h4.png" alt=""><br>起个名字<code>test-zz</code>，选择开发版，创建。<br><img src="/images/h5.png" alt=""><br>看看这个<code>云引擎</code>三个字，多么亲切，点击进去。然后点击左侧菜单<code>部署</code>，熟悉的<code>git源码部署</code><br><img src="/images/h6.png" alt=""><br>点击进去，发现要配置<code>repo</code>，那就去<code>设置</code>菜单设置<br><img src="/images/h7.png" alt=""><br>那我们进去部署<code>repo</code>，go<br><img src="/images/h8.png" alt=""><br>哟呵，不就是<code>git</code>的地址，我们去把源码地址复制上去。顺便把这个<code>Deploy keys</code>配置到你git仓库，很皮。<br><img src="/images/h9.png" alt=""><br>这里有个自定义变量，就是你的<code>express</code>或<code>koa</code>监听的端口，必须设置成<code>3000</code>，<strong>重要</strong>！<br><img src="/images/h10.png" alt=""><br>弄好之后，自定义你的注意域名。回到<code>部署</code>菜单，<strong>部署</strong>。</p>
+<p><strong>leancloud</strong>优秀的地方在于就是能和<strong>heroku</strong>一样能自动识别你的后台语言。<br><strong>注意点</strong></p>
+<ul>
+<li><code>node.js</code>的项目一定要有<code>package.json</code></li>
+<li><code>express</code>或<code>koa</code>监听的端口，必须设置成<code>3000</code></li>
+<li>默认的启动命令是<code>npm start</code>，这个<code>scripts</code>要配置成你的启动服务器文件。</li>
+<li>默认下载的依赖是<code>dependencies</code>，<code>devDependencies</code>不会下载。  </li>
+</ul>
+<p>下面是实例代码，基于<code>react/vue</code>的<code>spa</code>，前后端分离的静态代码。</p>
+<p>package.json<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">"name"</span>: <span class="string">"react-app"</span>,</span><br><span class="line">  <span class="string">"version"</span>: <span class="string">"1.0.0"</span>,</span><br><span class="line">  <span class="string">"description"</span>: <span class="string">""</span>,</span><br><span class="line">  <span class="string">"main"</span>: <span class="string">"src/main.js"</span>,</span><br><span class="line">  <span class="string">"scripts"</span>: &#123;</span><br><span class="line">    <span class="string">"test"</span>: <span class="string">"echo \"Error: no test specified\" &amp;&amp; exit 1"</span>,</span><br><span class="line">    <span class="string">"dev"</span>: <span class="string">"parcel index.html"</span>,</span><br><span class="line">    <span class="string">"build"</span>: <span class="string">"parcel build index.html --public-url ./"</span>,</span><br><span class="line">    <span class="string">"start"</span>: <span class="string">"node server"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">"author"</span>: <span class="string">""</span>,</span><br><span class="line">  <span class="string">"license"</span>: <span class="string">"MIT"</span>,</span><br><span class="line">  <span class="string">"dependencies"</span>: &#123;</span><br><span class="line">    <span class="string">"mobx"</span>: <span class="string">"^4.2.1"</span>,</span><br><span class="line">    <span class="string">"mobx-react"</span>: <span class="string">"^5.1.2"</span>,</span><br><span class="line">    <span class="string">"ra"</span>: <span class="string">"^0.9.7"</span>,</span><br><span class="line">    <span class="string">"re"</span>: <span class="string">"^0.1.4"</span>,</span><br><span class="line">    <span class="string">"react"</span>: <span class="string">"^16.3.1"</span>,</span><br><span class="line">    <span class="string">"react-dom"</span>: <span class="string">"^16.3.1"</span>,</span><br><span class="line">    <span class="string">"react-router"</span>: <span class="string">"^4.2.0"</span>,</span><br><span class="line">    <span class="string">"react-router-dom"</span>: <span class="string">"^4.2.2"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">"devDependencies"</span>: &#123;</span><br><span class="line">    <span class="string">"autoprefixer"</span>: <span class="string">"^8.2.0"</span>,</span><br><span class="line">    <span class="string">"babel-eslint"</span>: <span class="string">"^8.2.2"</span>,</span><br><span class="line">    <span class="string">"babel-plugin-transform-class-properties"</span>: <span class="string">"^6.24.1"</span>,</span><br><span class="line">    <span class="string">"babel-preset-env"</span>: <span class="string">"^1.6.1"</span>,</span><br><span class="line">    <span class="string">"babel-preset-react"</span>: <span class="string">"^6.24.1"</span>,</span><br><span class="line">    <span class="string">"babel-preset-stage-0"</span>: <span class="string">"^6.24.1"</span>,</span><br><span class="line">    <span class="string">"eslint"</span>: <span class="string">"^4.19.1"</span>,</span><br><span class="line">    <span class="string">"eslint-config-yelingfeng"</span>: <span class="string">"0.0.4"</span>,</span><br><span class="line">    <span class="string">"eslint-plugin-react"</span>: <span class="string">"^7.7.0"</span>,</span><br><span class="line">    <span class="string">"express"</span>: <span class="string">"^4.16.3"</span>,</span><br><span class="line">    <span class="string">"parcel-bundler"</span>: <span class="string">"^1.7.0"</span>,</span><br><span class="line">    <span class="string">"postcss-modules"</span>: <span class="string">"^1.1.0"</span>,</span><br><span class="line">    <span class="string">"stylus"</span>: <span class="string">"^0.54.5"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>server.js<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">'express'</span>)</span><br><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>)</span><br><span class="line"><span class="keyword">const</span> axios = <span class="built_in">require</span>(<span class="string">'axios'</span>)</span><br><span class="line"><span class="keyword">const</span> app = express()</span><br><span class="line"><span class="keyword">const</span> history = <span class="built_in">require</span>(<span class="string">'connect-history-api-fallback'</span>)</span><br><span class="line"><span class="comment">// 引入第三方路由</span></span><br><span class="line"><span class="keyword">const</span> proxyConf = <span class="built_in">require</span>(<span class="string">'./config/proxy'</span>)</span><br><span class="line"><span class="keyword">const</span> headerConf = &#123;</span><br><span class="line">    <span class="comment">// referer: 'https://www.v2ex.com',</span></span><br><span class="line">    <span class="comment">// host: 'www.v2ex.com'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> apiRoutes = express.Router()</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> k <span class="keyword">in</span> proxyConf) &#123;</span><br><span class="line">    app.get(k, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</span><br><span class="line">        <span class="comment">// console.log(proxyConf[k])</span></span><br><span class="line">        axios.get(proxyConf[k], &#123;</span><br><span class="line">            headers: headerConf,</span><br><span class="line">            params: req.query</span><br><span class="line">        &#125;).then(<span class="function"><span class="params">response</span> =&gt;</span> &#123;</span><br><span class="line">            res.setHeader(<span class="string">'Access-Control-Allow-Origin'</span>, <span class="string">'*'</span>)</span><br><span class="line">            res.json(response.data)</span><br><span class="line">        &#125;).catch(<span class="function"><span class="params">e</span> =&gt;</span> &#123;</span><br><span class="line">            <span class="built_in">console</span>.log(e)</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br><span class="line">app.use(history())</span><br><span class="line">app.use(<span class="string">'/'</span>, apiRoutes)</span><br><span class="line">app.use(express.static(path.join(__dirname, <span class="string">'dist'</span>)))</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> port = process.env.PORT || <span class="number">5000</span></span><br><span class="line">app.listen(port)</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'server started '</span> + port)</span><br></pre></td></tr></table></figure></p>
+<p>这里我后端转发一些接口，是自己后端情况而定。<strong>dist</strong>目录是自己打包好了，你可以放在云引擎上打包。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/express/" rel="tag"># express</a>
+          
+            <a href="/tags/node/" rel="tag"># node</a>
+          
+            <a href="/tags/云引擎/" rel="tag"># 云引擎</a>
+          
+            <a href="/tags/薅羊毛/" rel="tag"># 薅羊毛</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/24/dragable.html" rel="next" title="拖拽类，一段代码的进化史">
+                <i class="fa fa-chevron-left"></i> 拖拽类，一段代码的进化史
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview sidebar-panel sidebar-panel-active">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.JPG"
+               alt="zou hang" />
+          <p class="site-author-name" itemprop="name">zou hang</p>
+           
+              <p class="site-description motion-element" itemprop="description">艰难人生，全力前进</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zouhangwithsweet" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/zou-hang-30/activities" target="_blank" title="Zhihu">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                    
+                      Zhihu
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zou hang</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("ra5bykhTzmKUHptvu3exwsfC-gzGzoHsz", "HDhiTRnTGnPe4JHlS4W0RfD5");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
